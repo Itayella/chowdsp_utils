@@ -43,22 +43,22 @@ public:
      * thread, make sure to set `couldBeAudioThread = true`.
      */
     template <typename Callable>
-    bool call (Callable&& operationToDefer, bool couldBeAudioThread = false)
+    void call (Callable&& operationToDefer, bool couldBeAudioThread = false)
     {
         if (juce::MessageManager::existsAndIsCurrentThread())
         {
             operationToDefer();
-            return true;
+            return;
         }
 
-        auto success = true;
         if (couldBeAudioThread)
         {
-            success = queue.try_enqueue (std::forward<Callable> (operationToDefer));
+            const auto success = queue.try_enqueue (std::forward<Callable> (operationToDefer));
 
             // The queue doesn't have enough space for all these messages!
             // Consider changing the default size of the queue.
             jassert (success);
+            juce::ignoreUnused (success);
         }
         else
         {
@@ -68,7 +68,6 @@ public:
         }
 
         callbacksReady.store (true);
-        return success;
     }
 
 private:

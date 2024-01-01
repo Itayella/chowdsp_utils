@@ -1,5 +1,9 @@
 #pragma once
 
+#include "juce_dsp/juce_dsp.h"
+#include "chowdsp_buffers/chowdsp_buffers.h"
+#include "chowdsp_simd/SIMD/chowdsp_SampleTypeHelpers.h"
+
 namespace chowdsp
 {
 #ifndef DOXYGEN

@@ -5,7 +5,6 @@ target_link_libraries(ForwardingTestPlugin
         juce::juce_dsp
         chowdsp::chowdsp_reverb
         chowdsp::chowdsp_sources
-        chowdsp::chowdsp_dsp_utils
         chowdsp::chowdsp_plugin_state
 )
 
@@ -22,7 +21,6 @@ target_sources(ForwardingTestPlugin
         InternalPlugins/PolygonalOscPlugin.cpp
         InternalPlugins/BandSplitPlugin.cpp
         InternalPlugins/PlateReverb.cpp
-        InternalPlugins/PolyphaseOversamplingPlugin.cpp
 )
 
 target_compile_definitions(ForwardingTestPlugin

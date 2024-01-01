@@ -1,10 +1,5 @@
 #pragma once
 
-#if JUCE_MODULE_AVAILABLE_juce_dsp
-JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wimplicit-const-int-float-conversion")
-#include <juce_dsp/juce_dsp.h>
-JUCE_END_IGNORE_WARNINGS_GCC_LIKE
-
 namespace chowdsp
 {
 /** Simple progress bar to visualize CPU usage */
@@ -32,5 +27,3 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CPUMeter)
 };
 } // namespace chowdsp
-
-#endif

@@ -26,7 +26,6 @@ void SignalGeneratorPlugin::prepareToPlay (double sampleRate, int samplesPerBloc
     westCoastFolder.prepare ((int) spec.numChannels);
     waveMultiplyFolder.prepare ((int) spec.numChannels);
     adaaSineClipper.prepare ((int) spec.numChannels);
-    clipGuard.prepare (spec);
 
     int resampleRatio = 2;
     for (auto* r : { &resample2, &resample3, &resample4 })
@@ -145,47 +144,38 @@ void SignalGeneratorPlugin::processAudioBlock (juce::AudioBuffer<float>& buffer)
         if (waveshapeIndex == 0)
         {
             // no waveshaper
-            clipGuard.setCeiling (100.0f);
         }
         else if (waveshapeIndex == 1)
         {
             adaaHardClipper.process (upsampledContext);
-            clipGuard.setCeiling (1.0f);
         }
         else if (waveshapeIndex == 2)
         {
             adaaTanhClipper.process (upsampledContext);
-            clipGuard.setCeiling (1.0f);
         }
         else if (waveshapeIndex == 3)
         {
             adaaCubicClipper.process (upsampledContext);
-            clipGuard.setCeiling (1.0f);
         }
         else if (waveshapeIndex == 4)
         {
             adaa9thOrderClipper.process (upsampledContext);
-            clipGuard.setCeiling (1.0f);
         }
         else if (waveshapeIndex == 5)
         {
             fullWaveRectifier.process (upsampledContext);
-            clipGuard.setCeiling (100.0f);
         }
         else if (waveshapeIndex == 6)
         {
             westCoastFolder.process (upsampledContext);
-            clipGuard.setCeiling (100.0f);
         }
         else if (waveshapeIndex == 7)
         {
             waveMultiplyFolder.processBlock (upsampledBuffer);
-            clipGuard.setCeiling (100.0f);
         }
         else if (waveshapeIndex == 8)
         {
             adaaSineClipper.process (upsampledContext);
-            clipGuard.setCeiling (100.0f);
         }
 
         if (resampler == nullptr)
@@ -194,10 +184,9 @@ void SignalGeneratorPlugin::processAudioBlock (juce::AudioBuffer<float>& buffer)
         }
         else
         {
-            resampler->process (upsampledBuffer, block);
+            auto&& bufferView = chowdsp::BufferView<float> { block };
+            chowdsp::BufferMath::copyBufferData (resampler->process (upsampledBlock), bufferView);
         }
-
-        clipGuard.processBlock (block);
     };
 
     setUpSampleChoice();

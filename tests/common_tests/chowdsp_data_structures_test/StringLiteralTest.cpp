@@ -2,8 +2,6 @@
 #include <CatchUtils.h>
 #include <chowdsp_data_structures/chowdsp_data_structures.h>
 
-using namespace chowdsp::string_literals;
-
 TEST_CASE ("String Literal Test", "[common][data-structures]")
 {
     SECTION ("Construction")
@@ -77,15 +75,5 @@ TEST_CASE ("String Literal Test", "[common][data-structures]")
         static constexpr chowdsp::StringLiteral sl { "BLAH" };
         const auto sl2 = sl + " BLAH!";
         REQUIRE (sl2 == "BLAH BLAH!");
-    }
-
-    SECTION ("Numbers")
-    {
-        static constexpr auto fifteen = 15_sl;
-        REQUIRE (fifteen == chowdsp::StringLiteral { "15" });
-
-        REQUIRE (chowdsp::StringLiteral<2> { (int) 15 } == chowdsp::StringLiteral { "15" });
-        REQUIRE (chowdsp::StringLiteral<2> { (size_t) 15 } == chowdsp::StringLiteral { "15" });
-        REQUIRE (chowdsp::StringLiteral<3> { (int) -15 } == chowdsp::StringLiteral { "-15" });
     }
 }

@@ -14,11 +14,9 @@ public:
     /** The sample type used by the buffer */
     using Type = SampleType;
 
-    BufferView() = default;
-
-    BufferView& operator= (const BufferView&) = default;
-    BufferView (BufferView&&) noexcept = default;
-    BufferView& operator= (BufferView&&) noexcept = default;
+    BufferView& operator= (const BufferView<SampleType>&) = delete;
+    BufferView (BufferView<SampleType>&&) = delete;
+    BufferView& operator= (BufferView<SampleType>&&) = delete;
 
     BufferView (SampleType* const* data, int dataNumChannels, int dataNumSamples, int sampleOffset = 0) : numChannels (dataNumChannels),
                                                                                                           numSamples (dataNumSamples)
@@ -255,8 +253,8 @@ private:
             channelPointers[ch] = data[ch + (size_t) startChannel] + sampleOffset;
     }
 
-    int numChannels = 1;
-    int numSamples = 0;
+    const int numChannels = 1;
+    const int numSamples;
 
     // Assuming we will never need an audio buffer with more than 64 channels.
     // Maybe we'll need to increase this is we're doing high-order ambisonics or something?

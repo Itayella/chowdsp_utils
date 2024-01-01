@@ -4,23 +4,17 @@
 
 namespace chowdsp
 {
-/** A simple arena allocator */
-class ArenaAllocator
+/** A simple stack allocator */
+class StackAllocator
 {
 public:
-    ArenaAllocator() = default;
+    StackAllocator() = default;
 
-    /** Constructs the arena with an initial allocated size. */
-    explicit ArenaAllocator (size_t size_in_bytes)
-    {
-        reset (size_in_bytes);
-    }
+    StackAllocator (const StackAllocator&) = delete;
+    StackAllocator& operator= (const StackAllocator&) = delete;
 
-    ArenaAllocator (const ArenaAllocator&) = delete;
-    ArenaAllocator& operator= (const ArenaAllocator&) = delete;
-
-    ArenaAllocator (ArenaAllocator&&) noexcept = default;
-    ArenaAllocator& operator= (ArenaAllocator&&) noexcept = default;
+    StackAllocator (StackAllocator&&) noexcept = default;
+    StackAllocator& operator= (StackAllocator&&) noexcept = default;
 
     /** Re-allocates the internal buffer with a given number of bytes */
     void reset (size_t new_size_bytes)
@@ -29,10 +23,7 @@ public:
         raw_data.resize (new_size_bytes, {});
     }
 
-    /**
-     * Moves the allocator "stack pointer" back to zero,
-     * effectively "reclaiming" all allocated memory.
-     */
+    /** Resets the allocator */
     void clear() noexcept
     {
         bytes_used = 0;
@@ -73,31 +64,22 @@ public:
      * Once the frame goes out of scope, the allocator will be reset
      * to whatever it's state was at the beginning of the frame.
      */
-    struct Frame
+    struct StackAllocatorFrame
     {
-        explicit Frame (ArenaAllocator& allocator)
+        explicit StackAllocatorFrame (StackAllocator& allocator)
             : alloc (allocator),
               bytes_used_at_start (alloc.bytes_used)
         {
         }
 
-        ~Frame()
+        ~StackAllocatorFrame()
         {
             alloc.bytes_used = bytes_used_at_start;
         }
 
-        ArenaAllocator& alloc;
+        StackAllocator& alloc;
         const size_t bytes_used_at_start;
     };
-
-    /** Deprecated alias for arena allocator frame */
-    using ArenaAllocatorFrame [[deprecated]] = Frame;
-
-    /** Creates a frame for this allocator */
-    auto create_frame()
-    {
-        return Frame { *this };
-    }
 
 private:
     std::vector<std::byte> raw_data {};

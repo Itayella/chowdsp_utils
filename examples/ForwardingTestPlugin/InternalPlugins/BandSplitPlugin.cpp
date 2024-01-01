@@ -1,5 +1,12 @@
 #include "BandSplitPlugin.h"
 
+namespace
+{
+const juce::ParameterID freqTag = { "freq", 100 };
+const juce::ParameterID orderTag = { "order", 100 };
+const juce::ParameterID modeTag = { "mode", 100 };
+} // namespace
+
 BandSplitPlugin::BandSplitPlugin() = default;
 
 void BandSplitPlugin::prepareToPlay (double sampleRate, int samplesPerBlock)
@@ -12,8 +19,9 @@ void BandSplitPlugin::prepareToPlay (double sampleRate, int samplesPerBlock)
     filter8.prepare (spec);
     filter12.prepare (spec);
 
-    for (auto& buffer : outBuffers)
-        buffer.setMaxSize (numChannels, samplesPerBlock);
+    lowBuffer.setMaxSize (numChannels, samplesPerBlock);
+    midBuffer.setMaxSize (numChannels, samplesPerBlock);
+    highBuffer.setMaxSize (numChannels, samplesPerBlock);
 }
 
 void BandSplitPlugin::processAudioBlock (juce::AudioBuffer<float>& buffer)
@@ -23,16 +31,14 @@ void BandSplitPlugin::processAudioBlock (juce::AudioBuffer<float>& buffer)
 
     // input buffer is used for low frequency signal
     auto&& bufferView = chowdsp::BufferView<float> { buffer };
-    for (auto& outBuffer : outBuffers)
-        outBuffer.setCurrentSize (numChannels, numSamples);
+    lowBuffer.setCurrentSize (numChannels, numSamples);
+    highBuffer.setCurrentSize (numChannels, numSamples);
 
     const auto processFilter = [this, &bufferView] (auto& filter)
     {
-        filter.setCrossoverFrequency (0, *state.params.freqLowParam);
-        filter.setCrossoverFrequency (1, *state.params.freqMidParam);
-        filter.setCrossoverFrequency (2, *state.params.freqHighParam);
-
-        filter.processBlock (bufferView, { outBuffers[0], outBuffers[1], outBuffers[2], outBuffers[3] });
+        filter.setLowCrossoverFrequency (*state.params.freqLowParam);
+        filter.setHighCrossoverFrequency (*state.params.freqHighParam);
+        filter.processBlock (bufferView, lowBuffer, midBuffer, highBuffer);
     };
 
     const auto orderIndex = state.params.orderParam->getIndex();
@@ -51,27 +57,22 @@ void BandSplitPlugin::processAudioBlock (juce::AudioBuffer<float>& buffer)
     const auto modeIndex = state.params.modeParam->getIndex();
     if (modeIndex == 1) // solo low
     {
-        for (auto bufferIndex : { 1, 2, 3 })
-            outBuffers[(size_t) bufferIndex].clear();
+        chowdsp::BufferMath::applyGain (midBuffer, 0.0f);
+        chowdsp::BufferMath::applyGain (highBuffer, 0.0f);
     }
-    else if (modeIndex == 2) // solo mid-low
+    else if (modeIndex == 2) // solo mid
     {
-        for (auto bufferIndex : { 0, 2, 3 })
-            outBuffers[(size_t) bufferIndex].clear();
+        chowdsp::BufferMath::applyGain (lowBuffer, 0.0f);
+        chowdsp::BufferMath::applyGain (highBuffer, 0.0f);
     }
-    else if (modeIndex == 3) // solo mid-high
+    else if (modeIndex == 3) // solo high
     {
-        for (auto bufferIndex : { 0, 1, 3 })
-            outBuffers[(size_t) bufferIndex].clear();
-    }
-    else if (modeIndex == 4) // solo high
-    {
-        for (auto bufferIndex : { 0, 1, 2 })
-            outBuffers[(size_t) bufferIndex].clear();
+        chowdsp::BufferMath::applyGain (lowBuffer, 0.0f);
+        chowdsp::BufferMath::applyGain (midBuffer, 0.0f);
     }
 
     // sum bands back together
-    chowdsp::BufferMath::copyBufferData (outBuffers[0], bufferView);
-    for (size_t i = 1; i < outBuffers.size(); ++i)
-        chowdsp::BufferMath::addBufferData (outBuffers[i], bufferView);
+    chowdsp::BufferMath::copyBufferData (lowBuffer, bufferView);
+    chowdsp::BufferMath::addBufferData (midBuffer, bufferView);
+    chowdsp::BufferMath::addBufferData (highBuffer, bufferView);
 }

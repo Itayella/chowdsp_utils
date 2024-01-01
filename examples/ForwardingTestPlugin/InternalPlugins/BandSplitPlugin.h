@@ -8,7 +8,6 @@ struct BandSplitParams : chowdsp::ParamHolder
     BandSplitParams()
     {
         add (freqLowParam,
-             freqMidParam,
              freqHighParam,
              orderParam,
              modeParam);
@@ -21,18 +20,11 @@ struct BandSplitParams : chowdsp::ParamHolder
         200.0f
     };
 
-    chowdsp::FreqHzParameter::Ptr freqMidParam {
-        juce::ParameterID { "freq_mid", 100 },
-        "Mid Crossover Frequency",
-        chowdsp::ParamUtils::createNormalisableRange (20.0f, 20000.0f, 2000.0f),
-        1000.0f
-    };
-
     chowdsp::FreqHzParameter::Ptr freqHighParam {
         juce::ParameterID { "freq_high", 100 },
         "High Crossover Frequency",
         chowdsp::ParamUtils::createNormalisableRange (20.0f, 20000.0f, 2000.0f),
-        8000.0f
+        2000.0f
     };
 
     chowdsp::ChoiceParameter::Ptr orderParam {
@@ -45,7 +37,7 @@ struct BandSplitParams : chowdsp::ParamHolder
     chowdsp::ChoiceParameter::Ptr modeParam {
         juce::ParameterID { "mode", 100 },
         "Mode",
-        juce::StringArray { "Through", "Solo Low", "Solo Mid-Low", "Solo Mid-High", "Solo High" },
+        juce::StringArray { "Through", "Solo Low", "Solo Mid", "Solo High" },
         0
     };
 };
@@ -63,14 +55,15 @@ public:
     juce::AudioProcessorEditor* createEditor() override { return nullptr; }
 
 private:
-    static constexpr auto numBands = 4;
-    chowdsp::CrossoverFilter<float, 1, numBands> filter1;
-    chowdsp::CrossoverFilter<float, 2, numBands> filter2;
-    chowdsp::CrossoverFilter<float, 4, numBands> filter4;
-    chowdsp::CrossoverFilter<float, 8, numBands> filter8;
-    chowdsp::CrossoverFilter<float, 12, numBands> filter12;
+    chowdsp::ThreeWayCrossoverFilter<float, 1> filter1;
+    chowdsp::ThreeWayCrossoverFilter<float, 2> filter2;
+    chowdsp::ThreeWayCrossoverFilter<float, 4> filter4;
+    chowdsp::ThreeWayCrossoverFilter<float, 8> filter8;
+    chowdsp::ThreeWayCrossoverFilter<float, 12> filter12;
 
-    std::array<chowdsp::Buffer<float>, numBands> outBuffers;
+    chowdsp::Buffer<float> lowBuffer;
+    chowdsp::Buffer<float> midBuffer;
+    chowdsp::Buffer<float> highBuffer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BandSplitPlugin)
 };

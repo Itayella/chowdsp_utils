@@ -17,11 +17,10 @@ public:
 
     /** Initialises the plugin state with a given set of parameters. */
     void initialise (ParamHolder& parameters,
-                     juce::AudioProcessor* proc = nullptr,
+                     juce::AudioProcessor* processor = nullptr,
                      juce::UndoManager* um = nullptr)
     {
         params = &parameters;
-        processor = proc;
         undoManager = um;
         listeners.emplace (parameters);
         if (processor != nullptr)
@@ -81,7 +80,6 @@ public:
         mainThreadAction.call (std::forward<Callable> (func), couldBeAudioThread);
     }
 
-    juce::AudioProcessor* processor = nullptr;
     juce::UndoManager* undoManager = nullptr;
 
 private:
@@ -90,16 +88,5 @@ private:
     DeferredAction mainThreadAction;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginState)
-};
-
-/** A "dummy" plugin state that does absolutely nothing! */
-struct DummyPluginState : PluginState
-{
-    void serialize (juce::MemoryBlock&) const override {}
-    void deserialize (const juce::MemoryBlock&) override {}
-
-    NonParamState non_params {};
-    [[nodiscard]] NonParamState& getNonParameters() override { return non_params; }
-    [[nodiscard]] const NonParamState& getNonParameters() const override { return non_params; }
 };
 } // namespace chowdsp

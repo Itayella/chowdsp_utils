@@ -52,7 +52,6 @@ public:
     void setValueAsPartOfGesture (ParamElementType newValue);
 
     ParamType* param = nullptr;
-    PluginState* pluginState = nullptr;
 
 private:
     template <typename Func>

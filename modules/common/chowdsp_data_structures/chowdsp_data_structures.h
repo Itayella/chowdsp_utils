@@ -29,16 +29,12 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "Structures/chowdsp_OptionalPointer.h"
 #include "Structures/chowdsp_RawObject.h"
 #include "Structures/chowdsp_SmallVector.h"
+#include "Structures/chowdsp_StackAllocator.h"
 #include "Structures/chowdsp_StringLiteral.h"
 
-#include "Helpers/chowdsp_ArrayHelpers.h"
 #include "Helpers/chowdsp_TupleHelpers.h"
 #include "Helpers/chowdsp_VectorHelpers.h"
 #include "Helpers/chowdsp_Iterators.h"
 
 #include "Structures/chowdsp_AbstractTree.h"
 #include "Structures/chowdsp_BucketArray.h"
-#include "Structures/chowdsp_SmallMap.h"
-
-#include "Allocators/chowdsp_ArenaAllocator.h"
-#include "Allocators/chowdsp_ChainedArenaAllocator.h"

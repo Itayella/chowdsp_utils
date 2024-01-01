@@ -7,9 +7,9 @@ PluginStateImpl<ParameterState, NonParameterState, Serializer>::PluginStateImpl 
 }
 
 template <typename ParameterState, typename NonParameterState, typename Serializer>
-PluginStateImpl<ParameterState, NonParameterState, Serializer>::PluginStateImpl (juce::AudioProcessor& proc, juce::UndoManager* um)
+PluginStateImpl<ParameterState, NonParameterState, Serializer>::PluginStateImpl (juce::AudioProcessor& processor, juce::UndoManager* um)
 {
-    initialise (params, &proc, um);
+    initialise (params, &processor, um);
 }
 
 template <typename ParameterState, typename NonParameterState, typename Serializer>

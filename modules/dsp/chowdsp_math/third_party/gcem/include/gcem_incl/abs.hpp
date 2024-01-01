@@ -27,6 +27,8 @@
  * @param x a real-valued input.
  * @return the absolute value of \c x, \f$ |x| \f$.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wfloat-equal"
 
 template <typename T>
 constexpr T
@@ -38,5 +40,5 @@ constexpr T
             x < T (0) ? -x
                       : x);
 }
-
+#pragma clang diagnostic pop
 #endif

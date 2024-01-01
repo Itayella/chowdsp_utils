@@ -37,23 +37,23 @@ namespace xsimd
         struct simd_traits_impl<T, false>
         {
             using type = T;
-            using bool_type = bool;
+            using bool_type [[maybe_unused]] = bool;
             static constexpr size_t size = 1;
         };
 
         template <class T>
-        constexpr size_t simd_traits_impl<T, false>::size;
+        constexpr size_t simd_traits_impl<T, false>::size; // NOLINT(readability-redundant-declaration)
 
         template <class T>
         struct simd_traits_impl<T, true>
         {
             using type = batch<T>;
-            using bool_type = typename type::batch_bool_type;
+            using bool_type [[maybe_unused]] = typename type::batch_bool_type;
             static constexpr size_t size = type::size;
         };
 
         template <class T>
-        constexpr size_t simd_traits_impl<T, true>::size;
+        constexpr size_t simd_traits_impl<T, true>::size; // NOLINT(readability-redundant-declaration)
 
         template <class T, class A>
         struct static_check_supported_config_emitter

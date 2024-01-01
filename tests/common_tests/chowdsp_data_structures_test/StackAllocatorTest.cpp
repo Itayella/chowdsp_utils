@@ -1,9 +1,10 @@
 #include <CatchUtils.h>
 #include <chowdsp_data_structures/chowdsp_data_structures.h>
 
-TEST_CASE ("Arena Allocator Test", "[common][data-structures]")
+TEST_CASE ("Stack Allocator Test", "[common][data-structures]")
 {
-    chowdsp::ArenaAllocator allocator { 150 };
+    chowdsp::StackAllocator allocator;
+    allocator.reset (150);
 
     // allocate doubles
     {
@@ -21,7 +22,7 @@ TEST_CASE ("Arena Allocator Test", "[common][data-structures]")
 
     // allocate with stack frame
     {
-        const auto frame = allocator.create_frame();
+        chowdsp::StackAllocator::StackAllocatorFrame frame { allocator };
         auto* some_chars = allocator.allocate<char> (30);
         juce::ignoreUnused (some_chars);
         REQUIRE (allocator.get_bytes_used() == 150);
@@ -32,7 +33,7 @@ TEST_CASE ("Arena Allocator Test", "[common][data-structures]")
     // aligned allocation
     {
         auto* some_data = allocator.allocate<float> (1, 16);
-        REQUIRE (juce::snapPointerToAlignment (some_data, (size_t) 16) == some_data);
+        REQUIRE (juce::snapPointerToAlignment (some_data, 16) == some_data);
     }
 
     // overfull allocation

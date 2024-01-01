@@ -10,7 +10,6 @@ namespace parameters_view_detail
         BooleanParameterComponent (BoolParameter& param, PluginState& pluginState)
             : attachment (param, pluginState, button)
         {
-            setComponentID (param.paramID);
             addAndMakeVisible (button);
         }
 
@@ -34,7 +33,6 @@ namespace parameters_view_detail
         ChoiceParameterComponent (ChoiceParameter& param, PluginState& pluginState)
             : attachment (param, pluginState, box)
         {
-            setComponentID (param.paramID);
             addAndMakeVisible (box);
         }
 
@@ -58,7 +56,6 @@ namespace parameters_view_detail
         SliderParameterComponent (FloatParameter& param, PluginState& pluginState)
             : attachment (param, pluginState, slider)
         {
-            setComponentID (param.paramID);
             slider.setScrollWheelEnabled (false);
             addAndMakeVisible (slider);
         }
@@ -93,7 +90,6 @@ namespace parameters_view_detail
             addAndMakeVisible (parameterLabel);
 
             addAndMakeVisible (*(parameterComp = createParameterComp (pluginState)));
-            setComponentID (parameterComp->getComponentID());
 
             setSize (400, 40);
         }
@@ -202,32 +198,6 @@ struct ParametersView::Pimpl
         return maxInner;
     }
 
-    [[nodiscard]] juce::Component* getComponentForParameter (const juce::RangedAudioParameter& param) const
-    {
-        return getComponentForParameter (param, *view.getRootItem(), view);
-    }
-
-    static juce::Component* getComponentForParameter (const juce::RangedAudioParameter& param,
-                                                      const juce::TreeViewItem& item,
-                                                      const juce::TreeView& tree)
-    {
-        for (int i = 0; i < item.getNumSubItems(); ++i)
-        {
-            if (const auto* subItem = item.getSubItem (i))
-            {
-                if (auto* paramControlItem = dynamic_cast<const parameters_view_detail::ParamControlItem*> (subItem))
-                {
-                    if (&paramControlItem->param == &param)
-                        return tree.getItemComponent (subItem);
-                }
-
-                if (auto* comp = getComponentForParameter (param, *subItem, tree))
-                    return comp;
-            }
-        }
-        return nullptr;
-    }
-
     parameters_view_detail::ParameterGroupItem groupItem;
     juce::TreeView view;
 };
@@ -255,10 +225,5 @@ void ParametersView::paint (juce::Graphics& g)
 void ParametersView::resized()
 {
     pimpl->view.setBounds (getLocalBounds());
-}
-
-juce::Component* ParametersView::getComponentForParameter (const juce::RangedAudioParameter& param)
-{
-    return pimpl->getComponentForParameter (param);
 }
 } // namespace chowdsp

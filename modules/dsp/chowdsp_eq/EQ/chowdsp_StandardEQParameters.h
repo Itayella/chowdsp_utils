@@ -52,7 +52,7 @@ public:
         const float qDefault = CoefficientCalculators::butterworthQ<float>;
 
         /** The range to use for the Q parameter in this band */
-        const juce::NormalisableRange<float> qRange = ParamUtils::createNormalisableRange (0.1f, 20.0f, CoefficientCalculators::butterworthQ<float>);
+        const juce::NormalisableRange<float> qRange = ParamUtils::createNormalisableRange (0.5f, 20.0f, CoefficientCalculators::butterworthQ<float>);
 
         /** The range to use for the Gain [dB] parameter in this band */
         const juce::NormalisableRange<float> gainRange = juce::NormalisableRange { -18.0f, 18.0f };
@@ -101,7 +101,7 @@ public:
     using EQParameterHandles = std::array<EQBandParams, NumBands>;
 
     /** Constructor */
-    explicit StandardEQParameters (EQParameterHandles&& paramHandles, const juce::String& name = {});
+    explicit StandardEQParameters (EQParameterHandles&& paramHandles);
 
     /** Parameter handles */
     EQParameterHandles eqParams;

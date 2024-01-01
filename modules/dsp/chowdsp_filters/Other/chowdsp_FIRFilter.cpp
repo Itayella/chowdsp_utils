@@ -1,3 +1,5 @@
+#if ! CHOWDSP_NO_XSIMD
+
 #include "chowdsp_FIRFilter.h"
 
 #if defined(__APPLE_CPP__) || defined(__APPLE_CC__)
@@ -27,12 +29,8 @@ void FIRFilter<FloatType>::setOrder (int newOrder)
 {
     order = newOrder;
 
-#if ! CHOWDSP_NO_XSIMD
     static constexpr int batchSize = xsimd::batch<FloatType>::size;
     paddedOrder = batchSize * Math::ceiling_divide (order, batchSize);
-#else
-    paddedOrder = order;
-#endif
     coefficients.resize (paddedOrder, {});
     prepare ((int) state.size());
 }
@@ -84,7 +82,6 @@ inline FloatType FIRFilter<FloatType>::processSampleInternal (FloatType x, Float
     return y;
 }
 
-#if ! CHOWDSP_NO_XSIMD
 template <typename FloatType>
 inline FloatType FIRFilter<FloatType>::simdInnerProduct (const FloatType* z, const FloatType* h, int N)
 {
@@ -106,13 +103,6 @@ inline FloatType FIRFilter<FloatType>::simdInnerProduct (const FloatType* z, con
 
     return xsimd::reduce_add (batch_y);
 }
-#else
-template <typename FloatType>
-inline FloatType FIRFilter<FloatType>::simdInnerProduct (const FloatType* z, const FloatType* h, int N)
-{
-    return std::inner_product (z, z + N, h, FloatType {});
-}
-#endif
 
 template <typename FloatType>
 inline void FIRFilter<FloatType>::processSampleInternalBypassed (FloatType x, FloatType* z, int& zPtr, int order) noexcept
@@ -128,3 +118,5 @@ template class FIRFilter<double>;
 } // namespace chowdsp
 
 JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+
+#endif // ! CHOWDSP_NO_XSIMD

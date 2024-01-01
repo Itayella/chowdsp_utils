@@ -9,7 +9,6 @@
 #include "InternalPlugins/PolygonalOscPlugin.h"
 #include "InternalPlugins/BandSplitPlugin.h"
 #include "InternalPlugins/PlateReverb.h"
-#include "InternalPlugins/PolyphaseOversamplingPlugin.h"
 
 struct PluginParams : chowdsp::ParamHolder
 {
@@ -30,7 +29,6 @@ struct PluginParams : chowdsp::ParamHolder
             "Polygonal Oscillator",
             "Band Split",
             "Plate Reverb",
-            "Polyphase Oversampling",
         },
         0
     };
@@ -58,7 +56,6 @@ private:
     PolygonalOscPlugin polygonalOsc;
     BandSplitPlugin bandSplit;
     PlateReverb plateReverb;
-    PolyphaseOversamplingPlugin polyphaseOversampling;
 
     struct ParamForwardingProvider
     {

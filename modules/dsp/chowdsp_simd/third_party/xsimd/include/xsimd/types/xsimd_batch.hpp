@@ -98,11 +98,11 @@ namespace xsimd
 
         // constructors
         batch() = default; ///< Create a batch initialized with undefined values.
-        batch(T val) noexcept;
+        batch(T val) noexcept; // NOLINT(google-explicit-constructor)
         template <class... Ts>
         batch(T val0, T val1, Ts... vals) noexcept;
         explicit batch(batch_bool_type const& b) noexcept;
-        batch(register_type reg) noexcept;
+        batch(register_type reg) noexcept; // NOLINT(google-explicit-constructor)
 
         template <class U>
         XSIMD_NO_DISCARD static batch broadcast(U val) noexcept;
@@ -153,8 +153,8 @@ namespace xsimd
         // incr/decr operators
         inline batch& operator++() noexcept;
         inline batch& operator--() noexcept;
-        inline batch operator++(int) noexcept;
-        inline batch operator--(int) noexcept;
+        inline batch operator++(int) noexcept; // NOLINT(cert-dcl21-cpp)
+        inline batch operator--(int) noexcept; // NOLINT(cert-dcl21-cpp)
 
         // unary operators
         inline batch_bool_type operator!() const noexcept;
@@ -252,8 +252,8 @@ namespace xsimd
 
         // constructors
         batch_bool() = default; ///< Create a batch initialized with undefined values.
-        batch_bool(bool val) noexcept;
-        batch_bool(register_type reg) noexcept;
+        batch_bool(bool val) noexcept; // NOLINT(google-explicit-constructor)
+        batch_bool(register_type reg) noexcept; // NOLINT(google-explicit-constructor)
         template <class... Ts>
         batch_bool(bool val0, bool val1, Ts... vals) noexcept;
 
@@ -266,10 +266,10 @@ namespace xsimd
         XSIMD_NO_DISCARD static batch_bool load_aligned(bool const* mem) noexcept;
         XSIMD_NO_DISCARD static batch_bool load_unaligned(bool const* mem) noexcept;
 
-        bool get(std::size_t i) const noexcept;
+        bool get(std::size_t i) const noexcept; // NOLINT(modernize-use-nodiscard)
 
         // mask operations
-        uint64_t mask() const noexcept;
+        uint64_t mask() const noexcept; // NOLINT(modernize-use-nodiscard)
         static batch_bool from_mask(uint64_t mask) noexcept;
 
         // comparison operators
@@ -322,11 +322,11 @@ namespace xsimd
 
         // constructors
         batch() = default; ///< Create a batch initialized with undefined values.
-        batch(value_type const& val) noexcept;
+        batch(value_type const& val) noexcept; // NOLINT(google-explicit-constructor)
         batch(real_batch const& real, real_batch const& imag) noexcept;
 
-        batch(real_batch const& real) noexcept;
-        batch(T val) noexcept;
+        batch(real_batch const& real) noexcept; // NOLINT(google-explicit-constructor)
+        batch(T val) noexcept; // NOLINT(google-explicit-constructor)
         template <class... Ts>
         batch(value_type val0, value_type val1, Ts... vals) noexcept;
         explicit batch(batch_bool_type const& b) noexcept;
@@ -389,8 +389,8 @@ namespace xsimd
         // incr/decr operators
         batch& operator++() noexcept;
         batch& operator--() noexcept;
-        batch operator++(int) noexcept;
-        batch operator--(int) noexcept;
+        batch operator++(int) noexcept; // NOLINT(cert-dcl21-cpp)
+        batch operator--(int) noexcept; // NOLINT(cert-dcl21-cpp)
 
         // unary operators
         batch_bool_type operator!() const noexcept;
@@ -431,7 +431,7 @@ namespace xsimd
     };
 
     template <class T, class A>
-    constexpr std::size_t batch<std::complex<T>, A>::size;
+    constexpr std::size_t batch<std::complex<T>, A>::size; // NOLINT(readability-redundant-declaration)
 
 #ifdef XSIMD_ENABLE_XTL_COMPLEX
     template <typename T, bool i3ec, typename A>
@@ -818,7 +818,7 @@ namespace xsimd
     }
 
     template <class T, class A>
-    inline batch<T, A> batch<T, A>::operator++(int) noexcept
+    inline batch<T, A> batch<T, A>::operator++(int) noexcept // NOLINT(cert-dcl21-cpp)
     {
         detail::static_check_supported_config<T, A>();
         batch<T, A> copy(*this);
@@ -827,7 +827,7 @@ namespace xsimd
     }
 
     template <class T, class A>
-    inline batch<T, A> batch<T, A>::operator--(int) noexcept
+    inline batch<T, A> batch<T, A>::operator--(int) noexcept // NOLINT(cert-dcl21-cpp)
     {
         detail::static_check_supported_config<T, A>();
         batch copy(*this);
@@ -1336,7 +1336,7 @@ namespace xsimd
     }
 
     template <class T, class A>
-    inline batch<std::complex<T>, A> batch<std::complex<T>, A>::operator++(int) noexcept
+    inline batch<std::complex<T>, A> batch<std::complex<T>, A>::operator++(int) noexcept // NOLINT(cert-dcl21-cpp)
     {
         batch copy(*this);
         operator+=(1);
@@ -1344,7 +1344,7 @@ namespace xsimd
     }
 
     template <class T, class A>
-    inline batch<std::complex<T>, A> batch<std::complex<T>, A>::operator--(int) noexcept
+    inline batch<std::complex<T>, A> batch<std::complex<T>, A>::operator--(int) noexcept // NOLINT(cert-dcl21-cpp)
     {
         batch copy(*this);
         operator-=(1);

@@ -25,6 +25,9 @@
 #ifndef _gcem_is_inf_HPP
 #define _gcem_is_inf_HPP
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wfloat-equal"
+
 namespace internal
 {
 
@@ -138,5 +141,5 @@ constexpr bool
 }
 
 } // namespace internal
-
+#pragma clang diagnostic pop
 #endif
